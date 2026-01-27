@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stanford GeoGuessr</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="start-screen" class="screen active">
+        <h1>Stanford GeoGuessr</h1>
+        <p>Test your knowledge of the Farm!</p>
+        <button id="start-btn">Start Game</button>
+    </div>
+
+    <div id="game-container" class="hidden">
+        <div id="hud">
+            <div id="total-score-box">Total: <span id="total-score">0</span></div>
+            <div id="timer-box">Time: <span id="timer">60</span>s</div>
+        </div>
+
+        <div id="image-container">
+            <img id="location-image" src="" alt="Where is this?">
+        </div>
+
+        <div id="map-container">
+            <div id="map"></div>
+            
+            <button id="confirm-btn">Make Guess</button>
+            <button id="floating-next-btn" class="hidden">Next Round &rarr;</button>
+        </div>
+    </div>
+
+    <div id="result-overlay" class="hidden">
+        <div class="result-box">
+            <h2 id="round-result-title">Round Complete!</h2>
+            <p>Distance: <span id="round-distance">0</span> meters</p>
+            <p>Score: <span id="round-score">0</span> / 100</p>
+            <div class="button-row">
+                <button id="view-map-btn">View Map</button>
+                <button id="modal-next-btn">Next Round</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="end-screen" class="hidden">
+        <h1>Game Over!</h1>
+        <p>Final Score: <span id="final-score">0</span></p>
+        <button onclick="location.reload()">Play Again</button>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+    
+    <script src="script.js"></script>
+</body>
+</html>

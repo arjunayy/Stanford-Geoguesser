@@ -26,7 +26,7 @@ const locations = [
 let currentRound = 0;
 let totalScore = 0;
 let timerInterval;
-let timeLeft = 60;
+let timeLeft = 90; // Default variable, updated in loadRound
 
 // MAP OBJECTS
 let map = null;
@@ -98,7 +98,7 @@ function loadRound() {
     }
 
     // 1. RESET UI
-    timeLeft = 60;
+    timeLeft = 90; // CHANGED: Set timer to 90 seconds (1m 30s)
     hudTimer.innerText = timeLeft;
     confirmBtn.classList.remove('hidden');
     floatingNextBtn.classList.add('hidden');
@@ -138,14 +138,14 @@ function submitGuess() {
     floatingNextBtn.classList.remove('hidden'); // Show next button at bottom center
 
     let roundData = locations[currentRound];
-    let distance = 0;
+    let distanceInMeters = 0;
     let score = 0;
     let answerLatLng = [roundData.lat, roundData.lng];
 
     if (userMarker) {
         let userLatLng = userMarker.getLatLng();
-        distance = getDistanceFromLatLonInMeters(userLatLng.lat, userLatLng.lng, roundData.lat, roundData.lng);
-        score = calculateScore(distance);
+        distanceInMeters = getDistanceFromLatLonInMeters(userLatLng.lat, userLatLng.lng, roundData.lat, roundData.lng);
+        score = calculateScore(distanceInMeters);
 
         // Draw Line
         currentPolyline = L.polyline([userLatLng, answerLatLng], {color: 'red'}).addTo(map);
@@ -154,7 +154,7 @@ function submitGuess() {
         map.fitBounds(L.latLngBounds([userLatLng, answerLatLng]), {padding: [50,50]});
     } else {
         // No guess made
-        distance = 9999;
+        distanceInMeters = 99999;
         score = 0;
         map.setView(answerLatLng, 15); // Just show the answer
     }
@@ -175,7 +175,9 @@ function submitGuess() {
     }).addTo(map);
 
     // Show Results Overlay
-    document.getElementById('round-distance').innerText = Math.round(distance);
+    // CHANGED: Display feet to match the scoring system
+    let distanceInFeet = distanceInMeters * 3.28084;
+    document.getElementById('round-distance').innerText = Math.round(distanceInFeet) + " feet";
     document.getElementById('round-score').innerText = score;
     resultOverlay.classList.remove('hidden');
 }
@@ -208,18 +210,18 @@ function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
 
 function deg2rad(deg) { return deg * (Math.PI / 180); }
 
-// Logistic Scoring Function
-// Calibrated for: 2m=100pts, 25m~90pts, 50m~74pts, 100m~45pts, 250m=0pts
-function calculateScore(distance) {
-    if (distance <= 5) return 100;
-    if (distance > 250) return 0;
+// CHANGED: New Tiered Scoring Function
+function calculateScore(distanceInMeters) {
+    // 1 meter = 3.28084 feet
+    const distanceInFeet = distanceInMeters * 3.28084;
+
+    if (distanceInFeet <= 20) return 2;
+    if (distanceInFeet <= 100) return 1.5;
+    if (distanceInFeet <= 200) return 1;
+    if (distanceInFeet <= 500) return 0.75;
+    if (distanceInFeet <= 1000) return 0.5;
+    if (distanceInFeet <= 2000) return 0.25;
     
-    // Logistic function parameters
-    // a is roughly the midpoint distance (where score is 50)
-    // b is the steepness of the curve
-    const a = 90; 
-    const b = 1.8;
-    
-    let score = 100 / (1 + Math.pow(distance / a, b));
-    return Math.round(score);
+    // Greater than 2000 feet
+    return 0;
 }

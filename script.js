@@ -138,14 +138,14 @@ function submitGuess() {
     floatingNextBtn.classList.remove('hidden'); // Show next button at bottom center
 
     let roundData = locations[currentRound];
-    let distance = 0;
+    let distanceMeters = 0;
     let score = 0;
     let answerLatLng = [roundData.lat, roundData.lng];
 
     if (userMarker) {
         let userLatLng = userMarker.getLatLng();
-        distance = getDistanceFromLatLonInMeters(userLatLng.lat, userLatLng.lng, roundData.lat, roundData.lng);
-        score = calculateScore(distance);
+        distanceMeters = getDistanceFromLatLonInMeters(userLatLng.lat, userLatLng.lng, roundData.lat, roundData.lng);
+        score = calculateScore(distanceMeters);
 
         // Draw Line
         currentPolyline = L.polyline([userLatLng, answerLatLng], {color: 'red'}).addTo(map);
@@ -154,7 +154,7 @@ function submitGuess() {
         map.fitBounds(L.latLngBounds([userLatLng, answerLatLng]), {padding: [50,50]});
     } else {
         // No guess made
-        distance = 9999;
+        distanceMeters = 9999;
         score = 0;
         map.setView(answerLatLng, 15); // Just show the answer
     }
@@ -175,7 +175,9 @@ function submitGuess() {
     }).addTo(map);
 
     // Show Results Overlay
-    document.getElementById('round-distance').innerText = Math.round(distance);
+    // Convert meters to feet for display (1 meter = 3.28084 feet)
+    let distanceFeet = distanceMeters * 3.28084;
+    document.getElementById('round-distance').innerText = Math.round(distanceFeet);
     document.getElementById('round-score').innerText = score;
     resultOverlay.classList.remove('hidden');
 }
@@ -208,18 +210,24 @@ function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
 
 function deg2rad(deg) { return deg * (Math.PI / 180); }
 
-// Logistic Scoring Function
-// Calibrated for: 2m=100pts, 25m~90pts, 50m~74pts, 100m~45pts, 250m=0pts
-function calculateScore(distance) {
-    if (distance <= 5) return 100;
-    if (distance > 250) return 0;
-    
-    // Logistic function parameters
-    // a is roughly the midpoint distance (where score is 50)
-    // b is the steepness of the curve
-    const a = 90; 
-    const b = 1.8;
-    
-    let score = 100 / (1 + Math.pow(distance / a, b));
-    return Math.round(score);
+// NEW SCORING FUNCTION (Based on Feet)
+function calculateScore(distanceInMeters) {
+    // Convert to feet
+    let distanceInFeet = distanceInMeters * 3.28084;
+
+    if (distanceInFeet <= 20) {
+        return 2;
+    } else if (distanceInFeet <= 100) {
+        return 1.5;
+    } else if (distanceInFeet <= 200) {
+        return 1;
+    } else if (distanceInFeet <= 500) {
+        return 0.75;
+    } else if (distanceInFeet <= 1000) {
+        return 0.5;
+    } else if (distanceInFeet <= 2000) {
+        return 0.25;
+    } else {
+        return 0;
+    }
 }

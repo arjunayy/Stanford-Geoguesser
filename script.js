@@ -104,7 +104,7 @@ function loadRound() {
     floatingNextBtn.classList.add('hidden');
     resultOverlay.classList.add('hidden');
     
-    // 2. CLEANUP MAP LAYERS (Fixes issue #3)
+    // 2. CLEANUP MAP LAYERS
     if (userMarker) map.removeLayer(userMarker);
     if (trueMarker) map.removeLayer(trueMarker);
     if (currentPolyline) map.removeLayer(currentPolyline);
@@ -113,7 +113,7 @@ function loadRound() {
     trueMarker = null;
     currentPolyline = null;
 
-    // 3. LOAD IMAGE (Using .jpeg as specified)
+    // 3. LOAD IMAGE
     locationImage.src = `images/round${currentRound + 1}.jpeg`;
 
     // 4. START TIMER
@@ -135,7 +135,7 @@ function loadRound() {
 function submitGuess() {
     clearInterval(timerInterval);
     confirmBtn.classList.add('hidden'); // Hide guess button
-    floatingNextBtn.classList.remove('hidden'); // Show next button at top
+    floatingNextBtn.classList.remove('hidden'); // Show next button at bottom center
 
     let roundData = locations[currentRound];
     let distance = 0;
@@ -208,15 +208,18 @@ function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
 
 function deg2rad(deg) { return deg * (Math.PI / 180); }
 
-// Exponential Scoring Function
+// Logistic Scoring Function
+// Calibrated for: 2m=100pts, 25m~90pts, 50m~74pts, 100m~45pts, 250m=0pts
 function calculateScore(distance) {
     if (distance <= 5) return 100;
-    if (distance > 350) return 0;
+    if (distance > 250) return 0;
     
-    // Exponential decay factor tuned for 100 points at 5m and 0 points at 350m
-    const decay = 70; 
+    // Logistic function parameters
+    // a is roughly the midpoint distance (where score is 50)
+    // b is the steepness of the curve
+    const a = 90; 
+    const b = 1.8;
     
-    // Score increases exponentially the closer the answer is to 100 points
-    let score = 100 * Math.exp(-(distance - 5) / decay);
+    let score = 100 / (1 + Math.pow(distance / a, b));
     return Math.round(score);
 }

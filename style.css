@@ -9,7 +9,7 @@ body {
 
 /* UTILITY CLASSES */
 .hidden { display: none !important; }
-.active { display: flex !important; }
+.active { display: flex !important; } /* Used for the start screen */
 
 /* SCREENS (Start, End) */
 .screen {
@@ -83,11 +83,12 @@ button:hover { background: #f0f0f0; }
     justify-content: space-between;
     align-items: center;
     z-index: 500;
+    /* Allow clicks to pass through except to elements inside */
     pointer-events: none; 
 }
 
 #hud > * {
-    pointer-events: auto;
+    pointer-events: auto; /* Make child elements clickable */
 }
 
 #total-score-box, #timer-box {
@@ -98,27 +99,24 @@ button:hover { background: #f0f0f0; }
     font-weight: bold;
 }
 
-/* MAP BUTTONS (Confirm and Next) */
-/* Both positioned at bottom center */
-#confirm-btn, #floating-next-btn {
+/* Floating Next Button (Top Center of HUD) */
+#floating-next-btn {
+    background-color: #0098db; /* Blue to stand out */
+    color: white;
+    padding: 10px 20px;
+    margin: 0;
+    font-size: 1rem;
+    border: 2px solid white;
+}
+
+/* Confirm Button on Map */
+#confirm-btn {
     position: absolute;
-    bottom: 30px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 500;
     margin: 0;
-    min-width: 160px;
-}
-
-/* Specific styling for Floating Next Button */
-#floating-next-btn {
-    background-color: #0098db; /* Blue to stand out */
-    color: white;
-    border: 2px solid white;
-}
-
-#floating-next-btn:hover {
-    background-color: #0077b5;
 }
 
 /* RESULT OVERLAY */

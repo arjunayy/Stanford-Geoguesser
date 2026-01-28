@@ -4,60 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stanford GeoGuessr</title>
-
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/SVR37RddCPrV6hjzGE="
-        crossorigin=""/>
-
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🎓 Stanford Campus GeoGuessr</h1>
-            <div id="header-stats" style="display: flex; justify-content: center; gap: 40px; margin-top: 10px;">
-                <p id="score-display">Total Score: 0</p>
-                <p id="timer" style="font-weight: bold; color: #8c1515;">Time: 60s</p>
-            </div>
-        </header>
-        
-        <div id="game-area">
-            <div id="image-container">
-                <h2 id="round-title">Round 1 / 20</h2>
-                <img id="location-image" src="" alt="Location to guess">
-            </div>
 
-            <div id="map-container">
-                <div id="map"></div>
-                <div id="controls">
-                    <button id="guess-button" disabled>Place your guess on the map!</button>
-                </div>
-            </div>
+    <div id="start-screen" class="screen active">
+        <h1>Stanford GeoGuessr</h1>
+        <p>Test your knowledge of the Farm!</p>
+        <button id="start-btn">Start Game</button>
+    </div>
+
+    <div id="game-container" class="hidden">
+        <div id="hud">
+            <div id="total-score-box">Total: <span id="total-score">0</span></div>
+            <button id="floating-next-btn" class="hidden">Next Round &rarr;</button>
+            <div id="timer-box">Time: <span id="timer">60</span>s</div>
         </div>
 
-        <div id="result-modal" class="modal">
-            <div class="modal-content">
-                <h2 id="modal-title"></h2>
-                <p id="modal-distance"></p>
-                <p id="modal-points"></p>
-                <p id="modal-correct-location">Correct Location: <span id="correct-coords"></span></p>
-                <button id="next-button">Next Round</button>
-            </div>
+        <div id="image-container">
+            <img id="location-image" src="" alt="Where is this?">
         </div>
 
-        <div id="game-over-modal" class="modal">
-            <div class="modal-content">
-                <h2>Game Over!</h2>
-                <p>You have completed all 20 rounds.</p>
-                <h3>Final Score: <span id="final-score">0</span></h3>
-                <button id="restart-button">Play Again</button>
+        <div id="map-container">
+            <div id="map"></div>
+            <button id="confirm-btn">Make Guess</button>
+        </div>
+    </div>
+
+    <div id="result-overlay" class="hidden">
+        <div class="result-box">
+            <h2 id="round-result-title">Round Complete!</h2>
+            <p>Distance: <span id="round-distance">0</span> meters</p>
+            <p>Score: <span id="round-score">0</span> / 100</p>
+            <div class="button-row">
+                <button id="view-map-btn">View Map</button>
+                <button id="modal-next-btn">Next Round</button>
             </div>
         </div>
     </div>
 
+    <div id="end-screen" class="hidden">
+        <h1>Game Over!</h1>
+        <p>Final Score: <span id="final-score">0</span></p>
+        <button onclick="location.reload()">Play Again</button>
+    </div>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20n6a95c58xKAH+HWSFhT/4GgGfR5eP62w0zL8Fca0v="
-        crossorigin=""></script>
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+    
     <script src="script.js"></script>
 </body>
 </html>
